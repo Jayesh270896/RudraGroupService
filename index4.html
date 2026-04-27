@@ -1,0 +1,1497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rudra Group — Electronics Service Management</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+--blue:#1a56db;--blue-dark:#1e429f;--blue-light:#e8f0fe;
+--orange:#f97316;--orange-light:#fff7ed;
+--green:#16a34a;--green-light:#f0fdf4;
+--red:#dc2626;--red-light:#fef2f2;
+--amber:#d97706;--amber-light:#fffbeb;
+--gray:#6b7280;--gray-light:#f9fafb;--gray-border:#e5e7eb;
+--text:#111827;--text2:#374151;--text3:#6b7280;
+--white:#fff;--radius:8px;
+}
+body{font-family:'Segoe UI',system-ui,sans-serif;font-size:14px;color:var(--text);background:#f3f4f6;min-height:100vh}
+.hidden{display:none!important}
+.flex{display:flex}.flex-col{flex-direction:column}.items-center{align-items:center}.justify-between{justify-content:space-between}.gap-2{gap:8px}.gap-3{gap:12px}.gap-4{gap:16px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media(max-width:700px){.grid-4{grid-template-columns:1fr 1fr}.grid-3{grid-template-columns:1fr 1fr}.grid-2{grid-template-columns:1fr}}
+.card{background:var(--white);border-radius:var(--radius);border:1px solid var(--gray-border);padding:16px}
+.card-header{font-weight:600;font-size:15px;margin-bottom:12px;color:var(--text)}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:6px;border:none;cursor:pointer;font-size:13px;font-weight:500;transition:.15s}
+.btn-primary{background:var(--blue);color:#fff}.btn-primary:hover{background:var(--blue-dark)}
+.btn-success{background:var(--green);color:#fff}.btn-success:hover{background:#15803d}
+.btn-danger{background:var(--red);color:#fff}.btn-danger:hover{background:#b91c1c}
+.btn-outline{background:transparent;border:1px solid var(--gray-border);color:var(--text2)}.btn-outline:hover{background:var(--gray-light)}
+.btn-orange{background:var(--orange);color:#fff}.btn-orange:hover{background:#ea6c00}
+.btn-sm{padding:5px 10px;font-size:12px}
+input,select,textarea{width:100%;padding:8px 10px;border:1px solid var(--gray-border);border-radius:6px;font-size:13px;color:var(--text);background:var(--white)}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--blue)}
+label{font-size:12px;font-weight:500;color:var(--text2);display:block;margin-bottom:4px}
+.form-group{margin-bottom:12px}
+.badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600}
+.badge-blue{background:var(--blue-light);color:var(--blue-dark)}
+.badge-green{background:var(--green-light);color:var(--green)}
+.badge-orange{background:var(--orange-light);color:#c2410c}
+.badge-red{background:var(--red-light);color:var(--red)}
+.badge-gray{background:var(--gray-light);color:var(--gray)}
+.badge-amber{background:var(--amber-light);color:var(--amber)}
+.stat-card{background:var(--white);border-radius:var(--radius);padding:16px;border-left:4px solid var(--blue);border:1px solid var(--gray-border)}
+.stat-label{font-size:12px;color:var(--text3);margin-bottom:4px}
+.stat-value{font-size:22px;font-weight:700;color:var(--text)}
+.stat-sub{font-size:11px;color:var(--text3);margin-top:2px}
+table{width:100%;border-collapse:collapse}
+th{text-align:left;padding:10px 12px;font-size:12px;font-weight:600;color:var(--text3);background:var(--gray-light);border-bottom:1px solid var(--gray-border)}
+td{padding:10px 12px;font-size:13px;border-bottom:1px solid #f3f4f6;color:var(--text2)}
+tr:hover td{background:#fafafa}
+.tbl-wrap{overflow-x:auto}
+.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;display:flex;align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto}
+.modal{background:var(--white);border-radius:10px;padding:24px;width:min(600px,100%);position:relative;margin:auto}
+.modal-title{font-size:17px;font-weight:700;margin-bottom:16px}
+.modal-close{position:absolute;top:16px;right:16px;background:none;border:none;font-size:22px;cursor:pointer;color:var(--text3);line-height:1}
+#app{display:flex;flex-direction:column;min-height:100vh}
+#topbar{background:var(--blue-dark);color:#fff;padding:0 16px;height:52px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;position:sticky;top:0;z-index:100}
+.topbar-brand{font-weight:700;font-size:16px;display:flex;align-items:center;gap:8px}
+.topbar-right{display:flex;align-items:center;gap:8px;font-size:13px}
+.topbar-user{background:rgba(255,255,255,.15);padding:4px 10px;border-radius:20px;font-size:12px}
+#layout{display:flex;flex:1;min-height:0}
+#sidebar{width:195px;background:var(--white);border-right:1px solid var(--gray-border);padding:12px 0;flex-shrink:0;overflow-y:auto}
+@media(max-width:700px){#sidebar{display:none}}
+.nav-item{display:flex;align-items:center;gap:8px;padding:9px 16px;cursor:pointer;font-size:13px;color:var(--text2);transition:.1s}
+.nav-item:hover{background:var(--gray-light);color:var(--blue)}
+.nav-item.active{background:var(--blue-light);color:var(--blue);font-weight:600;border-right:3px solid var(--blue)}
+.nav-section{font-size:10px;font-weight:700;letter-spacing:.08em;color:var(--text3);padding:12px 16px 4px;text-transform:uppercase}
+#content{flex:1;padding:20px;overflow-y:auto;min-width:0}
+.page{display:none}.page.active{display:block}
+.page-title{font-size:20px;font-weight:700;color:var(--text);margin-bottom:16px}
+.filter-bar{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.filter-bar input,.filter-bar select{width:auto;min-width:120px;flex:1;max-width:200px}
+.login-wrap{min-height:100vh;background:linear-gradient(135deg,#1e3a8a,var(--blue-dark),#1a56db);display:flex;align-items:center;justify-content:center;padding:20px}
+.login-card{background:#fff;border-radius:14px;padding:36px;width:100%;max-width:380px;box-shadow:0 20px 50px rgba(0,0,0,.25)}
+.login-logo{text-align:center;margin-bottom:28px}
+.login-logo h1{font-size:22px;font-weight:800;color:var(--blue-dark)}
+.login-logo p{color:var(--text3);font-size:13px;margin-top:4px}
+.alert{padding:12px;border-radius:6px;font-size:13px;margin-bottom:12px;line-height:1.5}
+.alert-success{background:var(--green-light);color:var(--green);border:1px solid #bbf7d0}
+.alert-error{background:var(--red-light);color:var(--red);border:1px solid #fecaca}
+.alert-info{background:var(--blue-light);color:var(--blue-dark);border:1px solid #bfdbfe}
+.earnings-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #f3f4f6;font-size:13px}
+.section-divider{border:none;border-top:1px solid var(--gray-border);margin:16px 0}
+.low-stock{color:var(--red);font-weight:600}
+.chip{display:inline-flex;align-items:center;padding:2px 6px;background:var(--gray-light);border-radius:4px;font-size:11px;color:var(--text3);margin:1px}
+.inv-header{background:var(--blue-dark);color:#fff;padding:20px;border-radius:8px 8px 0 0}
+.inv-body{border:1px solid var(--gray-border);border-top:none;padding:20px;border-radius:0 0 8px 8px}
+.inv-total{font-size:16px;font-weight:700;text-align:right;margin-top:12px;color:var(--blue-dark)}
+.fab{position:fixed;bottom:20px;right:20px;width:52px;height:52px;border-radius:50%;background:var(--blue);color:#fff;border:none;font-size:24px;cursor:pointer;box-shadow:0 4px 16px rgba(26,86,219,.4);display:none;align-items:center;justify-content:center;z-index:200}
+@media(max-width:700px){.fab{display:flex}}
+</style>
+</head>
+<body>
+<div id="app">
+
+<!-- LOGIN -->
+
+<div class="form-group">
+  <label>Email Address</label>
+  <input id="l-email" type="email" placeholder="Email address">
+</div>
+
+<div class="form-group">
+  <label>Password</label>
+  <input id="l-pass" type="password" placeholder="Password">
+</div>
+
+<button class="btn btn-primary" style="width:100%;justify-content:center;padding:11px;font-size:14px;margin-bottom:14px" onclick="doLogin()">Sign In →</button>
+
+    <hr class="section-divider">
+    <div style="text-align:center">
+      <button class="btn btn-outline" style="width:100%;justify-content:center" onclick="showPublicRegister()">📋 Register a Customer Complaint</button>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="main-app" style="display:none;flex-direction:column;min-height:100vh">
+<div id="topbar">
+  <div class="topbar-brand">⚡ <span>Rudra Group</span> <span style="font-weight:300;font-size:12px;opacity:.6;display:none" id="tb-sub">Electronics Service</span></div>
+  <div class="topbar-right">
+    <span id="topbar-user" class="topbar-user"></span>
+    <button class="btn btn-outline" style="color:#fff;border-color:rgba(255,255,255,.3);font-size:12px;padding:5px 10px" onclick="showPublicRegister()">+ Complaint</button>
+    <button class="btn btn-outline" style="color:#fff;border-color:rgba(255,255,255,.3);font-size:12px;padding:5px 10px" onclick="doLogout()">Logout</button>
+  </div>
+</div>
+
+<div id="layout">
+  <div id="sidebar">
+    <div id="nav-admin">
+      <div class="nav-section">Overview</div>
+      <div class="nav-item active" data-page="dashboard" onclick="navTo('dashboard',this)">📊 Dashboard</div>
+      <div class="nav-section">Operations</div>
+      <div class="nav-item" data-page="complaints" onclick="navTo('complaints',this)">📋 Complaints</div>
+      <div class="nav-item" data-page="technicians" onclick="navTo('technicians',this)">👷 Technicians</div>
+      <div class="nav-section">Setup</div>
+      <div class="nav-item" data-page="services" onclick="navTo('services',this)">🔧 Services</div>
+      <div class="nav-item" data-page="inventory" onclick="navTo('inventory',this)">📦 Inventory</div>
+      <div class="nav-section">Finance</div>
+      <div class="nav-item" data-page="billing" onclick="navTo('billing',this)">🧾 Billing</div>
+      <div class="nav-item" data-page="payables" onclick="navTo('payables',this)">💰 Payables</div>
+      <div class="nav-item" data-page="reports" onclick="navTo('reports',this)">📈 Reports</div>
+      <div class="nav-section">Admin</div>
+      <div class="nav-item" data-page="users" onclick="navTo('users',this)">👥 Users</div>
+    </div>
+    <div id="nav-tech" class="hidden">
+      <div class="nav-section">My Work</div>
+      <div class="nav-item active" data-page="tech-dashboard" onclick="navTo('tech-dashboard',this)">📊 Dashboard</div>
+      <div class="nav-item" data-page="my-complaints" onclick="navTo('my-complaints',this)">📋 My Jobs</div>
+      <div class="nav-item" data-page="my-earnings" onclick="navTo('my-earnings',this)">💰 My Earnings</div>
+    </div>
+  </div>
+
+  <div id="content">
+    <div id="page-dashboard" class="page active"></div>
+    <div id="page-complaints" class="page"></div>
+    <div id="page-technicians" class="page"></div>
+    <div id="page-services" class="page"></div>
+    <div id="page-inventory" class="page"></div>
+    <div id="page-billing" class="page"></div>
+    <div id="page-payables" class="page"></div>
+    <div id="page-reports" class="page"></div>
+    <div id="page-users" class="page"></div>
+    <div id="page-tech-dashboard" class="page"></div>
+    <div id="page-my-complaints" class="page"></div>
+    <div id="page-my-earnings" class="page"></div>
+  </div>
+</div>
+</div><!-- /main-app -->
+
+<!-- MODALS -->
+<div id="public-complaint-modal" class="modal-backdrop hidden">
+  <div class="modal" style="width:min(640px,100%)">
+    <button class="modal-close" onclick="closeModal('public-complaint-modal')">×</button>
+    <div class="modal-title">📋 Register Service Complaint</div>
+    <div id="pub-success" class="alert alert-success hidden"></div>
+    <div class="grid-2">
+      <div class="form-group"><label>Customer Name *</label><input id="p-name" placeholder="Full Name"></div>
+      <div class="form-group"><label>Mobile Number *</label><input id="p-mobile" type="tel" placeholder="10-digit mobile"></div>
+    </div>
+    <div class="grid-2">
+      <div class="form-group"><label>Alternate Mobile</label><input id="p-alt" placeholder="Optional"></div>
+      <div class="form-group"><label>Product Type *</label>
+        <select id="p-product"><option value="">-- Select Product --</option><option>AC</option><option>Fridge</option><option>Washing Machine</option><option>Other</option></select>
+      </div>
+    </div>
+    <div class="grid-2">
+      <div class="form-group"><label>Brand</label><input id="p-brand" placeholder="e.g. LG, Samsung, Whirlpool"></div>
+      <div class="form-group"><label>Model Number</label><input id="p-model" placeholder="Model number"></div>
+    </div>
+    <div class="form-group"><label>Full Address *</label><textarea id="p-address" rows="2" placeholder="House no, Street, Area, City"></textarea></div>
+    <div class="form-group"><label>Complaint Description *</label><textarea id="p-desc" rows="2" placeholder="Describe the problem in detail"></textarea></div>
+    <div class="form-group"><label>Preferred Visit Date & Time</label><input id="p-date" type="datetime-local"></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap">
+      <button class="btn btn-outline" onclick="closeModal('public-complaint-modal')">Cancel</button>
+      <button class="btn btn-primary" onclick="submitPublicComplaint()">✅ Submit Complaint</button>
+    </div>
+  </div>
+</div>
+
+<div id="assign-modal" class="modal-backdrop hidden">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('assign-modal')">×</button>
+    <div class="modal-title">Assign Complaint to Technician</div>
+    <div class="form-group"><label>Select Technician *</label><select id="a-tech"></select></div>
+    <div class="form-group"><label>Expected Visit Date & Time *</label><input id="a-date" type="datetime-local"></div>
+    <div class="form-group"><label>Notes for Technician</label><textarea id="a-notes" rows="2" placeholder="Parts to carry, special instructions..."></textarea></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end">
+      <button class="btn btn-outline" onclick="closeModal('assign-modal')">Cancel</button>
+      <button class="btn btn-primary" onclick="confirmAssign()">Assign →</button>
+    </div>
+  </div>
+</div>
+
+<div id="status-modal" class="modal-backdrop hidden">
+  <div class="modal" style="width:min(620px,100%)">
+    <button class="modal-close" onclick="closeModal('status-modal')">×</button>
+    <div class="modal-title">Update Complaint Status</div>
+    <div class="form-group"><label>New Status</label>
+      <select id="st-status" onchange="onStatusChange(this.value)">
+        <option>Registered</option><option>Assigned</option><option>In Progress</option><option>Completed</option><option>Cancelled</option>
+      </select>
+    </div>
+    <div id="st-cancel-wrap" class="form-group hidden"><label>Cancellation Reason * (required)</label><textarea id="st-reason" rows="2" placeholder="Why is this being cancelled?"></textarea></div>
+    <div id="st-complete-wrap" class="hidden">
+      <hr class="section-divider">
+      <div style="font-weight:600;margin-bottom:8px;font-size:14px">Services Performed</div>
+      <div id="st-services-list"></div>
+      <button class="btn btn-outline btn-sm" onclick="addServiceLine()" style="margin-bottom:12px">+ Add Service</button>
+      <hr class="section-divider">
+      <div style="font-weight:600;margin-bottom:8px;font-size:14px">Parts Replaced / Used</div>
+      <div id="st-parts-list"></div>
+      <button class="btn btn-outline btn-sm" onclick="addPartLine()" style="margin-bottom:12px">+ Add Part</button>
+      <div class="form-group"><label>Payment Mode</label>
+        <select id="st-payment"><option>Cash</option><option>UPI</option><option>Card</option></select>
+      </div>
+    </div>
+    <div class="form-group"><label>Remarks / Notes</label><textarea id="st-remarks" rows="2" placeholder="Any remarks..."></textarea></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end">
+      <button class="btn btn-outline" onclick="closeModal('status-modal')">Cancel</button>
+      <button class="btn btn-primary" onclick="confirmStatus()">Update Status</button>
+    </div>
+  </div>
+</div>
+
+<div id="invoice-modal" class="modal-backdrop hidden">
+  <div class="modal" style="width:min(660px,100%)">
+    <button class="modal-close" onclick="closeModal('invoice-modal')">×</button>
+    <div id="invoice-content"></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px;flex-wrap:wrap">
+      <button class="btn btn-outline" onclick="closeModal('invoice-modal')">Close</button>
+      <button class="btn btn-orange" onclick="shareWA()">📱 WhatsApp Share</button>
+      <button class="btn btn-primary" onclick="downloadInvoicePDF()">⬇ Download PDF</button>
+    </div>
+  </div>
+</div>
+
+<div id="service-modal" class="modal-backdrop hidden">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('service-modal')">×</button>
+    <div id="sm-title" class="modal-title">Add Service</div>
+    <div class="form-group"><label>Service Name *</label><input id="sm-name" placeholder="e.g. AC Gas Refill, Deep Cleaning"></div>
+    <div class="grid-2">
+      <div class="form-group"><label>Price (₹) *</label><input id="sm-price" type="number" placeholder="1500"></div>
+      <div class="form-group"><label>Revenue Split Type</label>
+        <select id="sm-split-type" onchange="toggleSplitType()"><option value="percent">Percentage (%)</option><option value="fixed">Fixed Amount (₹)</option></select>
+      </div>
+    </div>
+    <div class="grid-2">
+      <div class="form-group"><label id="sm-admin-label">Admin Share (%) *</label><input id="sm-admin" type="number" placeholder="60"></div>
+      <div class="form-group"><label id="sm-tech-label">Technician Share (%) *</label><input id="sm-tech" type="number" placeholder="40"></div>
+    </div>
+    <div id="sm-preview" style="background:var(--blue-light);padding:10px;border-radius:6px;font-size:12px;margin-bottom:12px"></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end">
+      <button class="btn btn-outline" onclick="closeModal('service-modal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveService()">Save Service</button>
+    </div>
+  </div>
+</div>
+
+<div id="part-modal" class="modal-backdrop hidden">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('part-modal')">×</button>
+    <div id="pm-title" class="modal-title">Add Part / Equipment</div>
+    <div class="form-group"><label>Part Name *</label><input id="pm-name" placeholder="e.g. AC Capacitor 45MFD, Fan Motor"></div>
+    <div class="grid-2">
+      <div class="form-group"><label>Unit Price (₹) *</label><input id="pm-price" type="number" placeholder="450"></div>
+      <div class="form-group"><label>Stock Quantity *</label><input id="pm-stock" type="number" placeholder="10"></div>
+    </div>
+    <div style="display:flex;gap:8px;justify-content:flex-end">
+      <button class="btn btn-outline" onclick="closeModal('part-modal')">Cancel</button>
+      <button class="btn btn-primary" onclick="savePart()">Save Part</button>
+    </div>
+  </div>
+</div>
+
+<div id="payment-modal" class="modal-backdrop hidden">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('payment-modal')">×</button>
+    <div class="modal-title">Record Payment from Technician</div>
+    <div id="pay-info" style="background:var(--gray-light);padding:12px;border-radius:6px;margin-bottom:12px;font-size:13px;line-height:1.6"></div>
+    <div class="form-group"><label>Amount Received (₹) *</label><input id="pay-amount" type="number" placeholder="Enter amount"></div>
+    <div class="form-group"><label>Payment Mode</label><select id="pay-mode"><option>Cash</option><option>UPI</option><option>Bank Transfer</option><option>Cheque</option></select></div>
+    <div class="form-group"><label>Reference / Notes</label><input id="pay-notes" placeholder="UPI ref / cheque no / remarks"></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end">
+      <button class="btn btn-outline" onclick="closeModal('payment-modal')">Cancel</button>
+      <button class="btn btn-success" onclick="confirmPayment()">✅ Record Payment</button>
+    </div>
+  </div>
+</div>
+
+<div id="user-modal" class="modal-backdrop hidden">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('user-modal')">×</button>
+    <div id="um-title" class="modal-title">Add User</div>
+    <div class="form-group"><label>Full Name *</label><input id="um-name" placeholder="Full Name"></div>
+    <div class="form-group"><label>Email Address *</label><input id="um-email" type="email" placeholder="email@example.com"></div>
+    <div class="form-group"><label>Mobile Number</label><input id="um-mobile" placeholder="10-digit mobile"></div>
+    <div class="form-group"><label>Role *</label><select id="um-role"><option value="admin">Admin</option><option value="technician">Technician</option></select></div>
+    <div class="form-group"><label>Password *</label><input id="um-pass" type="password" placeholder="Set password"></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end">
+      <button class="btn btn-outline" onclick="closeModal('user-modal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveUser()">Save User</button>
+    </div>
+  </div>
+</div>
+
+<div id="history-modal" class="modal-backdrop hidden">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('history-modal')">×</button>
+    <div class="modal-title">Complaint History / Audit Trail</div>
+    <div id="history-content"></div>
+  </div>
+</div>
+
+</div><!-- /app -->
+
+<script>
+// ===========================
+// DATA STORE (localStorage)
+// ===========================
+let DB = {};
+
+function loadDB(){
+  try{ DB = JSON.parse(localStorage.getItem('rudra_db')||'{}'); }
+  catch(e){ DB = {}; }
+}
+
+function initDB(){
+  if(!DB.users) DB.users=[
+    {
+      id:'u1',
+      name:'Admin (Rudra)',
+      email:'admin@rudra.com',
+      password:'admin123',
+      role:'admin',
+      mobile:'9999999999'
+    },
+    {
+      id:'u2',
+      name:'Ravi Kumar',
+      email:'tech@rudra.com',
+      password:'tech123',
+      role:'technician',
+      mobile:'9876543210'
+    }
+  ];
+
+  if(!DB.services) DB.services=[];
+  if(!DB.parts) DB.parts=[];
+  if(!DB.complaints) DB.complaints=[];
+  if(!DB.payments) DB.payments=[];
+  if(!DB.dispatches) DB.dispatches=[];
+
+  saveDB();
+}
+}
+
+function saveDB(){ localStorage.setItem('rudra_db', JSON.stringify(DB)); }
+
+// ===========================
+// AUTH
+// ===========================
+let currentUser = null;
+let assigningId=null, statusId=null, payingTechId=null;
+let editingSvcId=null, editingPartId=null, editingUserId=null;
+let invoiceComplaintId=null;
+
+function doLogin(){
+  const email = document.getElementById('l-email').value.trim().toLowerCase();
+  const pass = document.getElementById('l-pass').value;
+  const user = DB.users.find(u => u.email.toLowerCase()===email && u.password===pass);
+  if(!user){
+    document.getElementById('login-err').textContent='Invalid email or password. Please try again.';
+    document.getElementById('login-err').classList.remove('hidden');
+    return;
+  }
+  currentUser = user;
+  document.getElementById('login-err').classList.add('hidden');
+  document.getElementById('login-screen').style.display='none';
+  document.getElementById('main-app').style.display='flex';
+  document.getElementById('topbar-user').textContent = user.name + ' · ' + user.role;
+  document.getElementById('tb-sub').style.display='inline';
+  setupNav();
+  if(user.role==='admin') renderDashboard();
+  else renderTechDashboard();
+}
+
+function doLogout(){
+  currentUser=null;
+  document.getElementById('login-screen').style.display='flex';
+  document.getElementById('main-app').style.display='none';
+}
+
+function setupNav(){
+  document.getElementById('nav-admin').classList.toggle('hidden', currentUser.role!=='admin');
+  document.getElementById('nav-tech').classList.toggle('hidden', currentUser.role!=='technician');
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  if(currentUser.role==='technician'){
+    document.querySelectorAll('#nav-tech .nav-item').forEach(i=>i.classList.remove('active'));
+    document.querySelector('#nav-tech .nav-item[data-page="tech-dashboard"]').classList.add('active');
+    document.getElementById('page-tech-dashboard').classList.add('active');
+  } else {
+    document.querySelector('#nav-admin .nav-item[data-page="dashboard"]').classList.add('active');
+    document.getElementById('page-dashboard').classList.add('active');
+  }
+}
+
+// Enter key for login
+document.addEventListener('keydown', e=>{
+  if(e.key==='Enter' && document.getElementById('login-screen').style.display!=='none') doLogin();
+});
+
+// ===========================
+// NAVIGATION
+// ===========================
+function navTo(page, el){
+  document.querySelectorAll('.nav-item').forEach(i=>i.classList.remove('active'));
+  if(el) el.classList.add('active');
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+page).classList.add('active');
+  const renders={
+    'dashboard':renderDashboard,'complaints':renderComplaints,'technicians':renderTechnicians,
+    'services':renderServices,'inventory':renderInventory,'billing':renderBilling,
+    'payables':renderPayables,'reports':renderReports,'users':renderUsers,
+    'tech-dashboard':renderTechDashboard,'my-complaints':renderMyComplaints,'my-earnings':renderMyEarnings
+  };
+  if(renders[page]) renders[page]();
+}
+
+// ===========================
+// UTILS
+// ===========================
+function uid(){ return 'u'+Date.now()+Math.random().toString(36).slice(2,5); }
+function fmt(n){ return '₹'+Number(n||0).toLocaleString('en-IN'); }
+function today(){ return new Date().toISOString().slice(0,10); }
+function fmtDate(dt){ if(!dt) return '—'; try{ return new Date(dt).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}); }catch(e){ return dt; } }
+function statusBadge(s){
+  const m={Registered:'badge-blue',Assigned:'badge-amber','In Progress':'badge-orange',Completed:'badge-green',Cancelled:'badge-red'};
+  return `<span class="badge ${m[s]||'badge-gray'}">${s}</span>`;
+}
+function getTech(id){ return DB.users.find(u=>u.id===id)||{name:'—',mobile:''}; }
+function getSvc(id){ return DB.services.find(s=>s.id===id)||{}; }
+function getPart(id){ return DB.parts.find(p=>p.id===id)||{}; }
+function closeModal(id){ document.getElementById(id).classList.add('hidden'); }
+function showModal(id){ document.getElementById(id).classList.remove('hidden'); }
+
+function calcComplaintTotal(c){
+  let t=0;
+  (c.services||[]).forEach(s=>{ const sv=getSvc(s.svcId); t+=(sv.price||0)*(s.qty||1); });
+  (c.parts||[]).forEach(p=>{ const pt=getPart(p.partId); t+=(pt.price||0)*(p.qty||1); });
+  return t;
+}
+
+function calcTechEarning(c){
+  let earn=0;
+  (c.services||[]).forEach(s=>{
+    const sv=getSvc(s.svcId); if(!sv.price) return;
+    const total=(sv.price||0)*(s.qty||1);
+    earn += sv.splitType==='fixed' ? sv.techVal*(s.qty||1) : total*sv.techVal/100;
+  });
+  return earn;
+}
+
+function calcAdminShare(c){
+  let share=0;
+  (c.services||[]).forEach(s=>{
+    const sv=getSvc(s.svcId); if(!sv.price) return;
+    const total=(sv.price||0)*(s.qty||1);
+    share += sv.splitType==='fixed' ? sv.adminVal*(s.qty||1) : total*sv.adminVal/100;
+  });
+  (c.parts||[]).forEach(p=>{ const pt=getPart(p.partId); share+=(pt.price||0)*(p.qty||1); });
+  return share;
+}
+
+function techPayable(techId){
+  const done = DB.complaints.filter(c=>c.techId===techId && c.status==='Completed');
+  const owed = done.reduce((a,c)=>a+calcAdminShare(c),0);
+  const paid = DB.payments.filter(p=>p.techId===techId).reduce((a,p)=>a+(p.amount||0),0);
+  return {owed, paid, balance:owed-paid};
+}
+
+// ===========================
+// DASHBOARD
+// ===========================
+function renderDashboard(){
+  const total=DB.complaints.length;
+  const completed=DB.complaints.filter(c=>c.status==='Completed');
+  const pending=DB.complaints.filter(c=>['Registered','Assigned','In Progress'].includes(c.status));
+  const unassigned=DB.complaints.filter(c=>c.status==='Registered');
+  const revenue=completed.reduce((a,c)=>a+calcComplaintTotal(c),0);
+  const adminRev=completed.reduce((a,c)=>a+calcAdminShare(c),0);
+  const techRev=completed.reduce((a,c)=>a+calcTechEarning(c),0);
+  const lowStock=DB.parts.filter(p=>p.stock<=3);
+  const recent=[...DB.complaints].reverse().slice(0,6);
+
+  document.getElementById('page-dashboard').innerHTML=`
+  <div class="page-title">📊 Dashboard</div>
+  <div class="grid-4" style="margin-bottom:16px">
+    <div class="stat-card" style="border-left:4px solid var(--blue)"><div class="stat-label">Total Complaints</div><div class="stat-value">${total}</div><div class="stat-sub">${pending.length} pending · ${unassigned.length} unassigned</div></div>
+    <div class="stat-card" style="border-left:4px solid var(--green)"><div class="stat-label">Completed Jobs</div><div class="stat-value">${completed.length}</div><div class="stat-sub">${total?Math.round(completed.length/total*100):0}% completion rate</div></div>
+    <div class="stat-card" style="border-left:4px solid var(--orange)"><div class="stat-label">Total Revenue</div><div class="stat-value">${fmt(revenue)}</div><div class="stat-sub">Admin: ${fmt(adminRev)} · Tech: ${fmt(techRev)}</div></div>
+    <div class="stat-card" style="border-left:4px solid var(--amber)"><div class="stat-label">Low Stock Parts</div><div class="stat-value">${lowStock.length}</div><div class="stat-sub">${lowStock.map(p=>p.name.split(' ').slice(0,2).join(' ')).join(', ')||'All OK'}</div></div>
+  </div>
+  ${unassigned.length>0?`<div class="alert alert-info" style="margin-bottom:16px">⚠️ <strong>${unassigned.length} complaint(s) waiting for assignment.</strong> Go to Complaints to assign a technician.</div>`:''}
+  <div class="grid-2" style="margin-bottom:16px">
+    <div class="card">
+      <div class="card-header">Recent Complaints</div>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>ID</th><th>Customer</th><th>Product</th><th>Status</th></tr></thead>
+        <tbody>${recent.map(c=>`<tr>
+          <td style="font-family:monospace;font-size:11px;font-weight:600">${c.id}</td>
+          <td>${c.name}</td><td>${c.product}</td><td>${statusBadge(c.status)}</td>
+        </tr>`).join('')}</tbody>
+      </table></div>
+    </div>
+    <div class="card">
+      <div class="card-header">Technician Status</div>
+      ${DB.users.filter(u=>u.role==='technician').map(t=>{
+        const jobs=DB.complaints.filter(c=>c.techId===t.id);
+        const done=jobs.filter(c=>c.status==='Completed').length;
+        const active=jobs.filter(c=>['Assigned','In Progress'].includes(c.status)).length;
+        const pay=techPayable(t.id);
+        return `<div style="padding:10px 0;border-bottom:1px solid #f3f4f6">
+          <div class="flex justify-between items-center">
+            <div>
+              <strong>${t.name}</strong>
+              <div style="font-size:11px;color:var(--text3);margin-top:2px">${jobs.length} total · ${done} done · ${active} active</div>
+            </div>
+            <div style="text-align:right">
+              ${pay.balance>0?`<span class="badge badge-red">${fmt(pay.balance)} due</span>`:
+              `<span class="badge badge-green">Settled</span>`}
+            </div>
+          </div>
+        </div>`;
+      }).join('')}
+      ${DB.users.filter(u=>u.role==='technician').length===0?'<p style="color:var(--text3);font-size:13px">No technicians added yet.</p>':''}
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header">Parts Inventory Overview</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px">
+      ${DB.parts.map(p=>`<div style="padding:10px;border:1px solid ${p.stock<=3?'var(--red)':'var(--gray-border)'};border-radius:8px;${p.stock<=3?'background:var(--red-light)':''}">
+        <div style="font-size:11px;font-weight:600;margin-bottom:4px;color:${p.stock<=3?'var(--red)':'var(--text)'}">${p.name}</div>
+        <div style="font-size:22px;font-weight:700;color:${p.stock===0?'var(--red)':p.stock<=3?'var(--amber)':'var(--text)'}">${p.stock}</div>
+        <div style="font-size:10px;color:var(--text3)">${fmt(p.price)} each${p.stock<=3?' ⚠ LOW':''}</div>
+      </div>`).join('')}
+    </div>
+  </div>`;
+}
+
+// ===========================
+// COMPLAINTS
+// ===========================
+let filterStatus='', filterDate='', filterTech='', filterProduct='';
+
+function renderComplaints(){
+  let list=[...DB.complaints].reverse();
+  if(filterStatus) list=list.filter(c=>c.status===filterStatus);
+  if(filterDate) list=list.filter(c=>c.createdAt===filterDate);
+  if(filterTech) list=list.filter(c=>c.techId===filterTech);
+  if(filterProduct) list=list.filter(c=>c.product===filterProduct);
+
+  const techOpts=DB.users.filter(u=>u.role==='technician').map(t=>`<option value="${t.id}">${t.name}</option>`).join('');
+
+  document.getElementById('page-complaints').innerHTML=`
+  <div class="flex justify-between items-center" style="margin-bottom:16px;flex-wrap:wrap;gap:8px">
+    <div class="page-title" style="margin:0">📋 Complaint Management <span style="font-size:14px;font-weight:400;color:var(--text3)">(${list.length} records)</span></div>
+    <button class="btn btn-primary" onclick="showPublicRegister()">+ New Complaint</button>
+  </div>
+  <div class="filter-bar">
+    <select onchange="filterStatus=this.value;renderComplaints()"><option value="">All Status</option><option>Registered</option><option>Assigned</option><option>In Progress</option><option>Completed</option><option>Cancelled</option></select>
+    <select onchange="filterProduct=this.value;renderComplaints()"><option value="">All Products</option><option>AC</option><option>Fridge</option><option>Washing Machine</option><option>Other</option></select>
+    <select onchange="filterTech=this.value;renderComplaints()"><option value="">All Technicians</option>${techOpts}</select>
+    <input type="date" onchange="filterDate=this.value;renderComplaints()" title="Filter by registration date">
+    <button class="btn btn-outline btn-sm" onclick="filterStatus='';filterDate='';filterTech='';filterProduct='';renderComplaints()">✕ Clear</button>
+  </div>
+  <div class="card" style="padding:0;overflow:hidden">
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>Complaint ID</th><th>Customer</th><th>Product</th><th>Status</th><th>Technician</th><th>Registered</th><th>Actions</th></tr></thead>
+    <tbody>${list.length===0?`<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--text3)">No complaints found</td></tr>`:''}
+    ${list.map(c=>`<tr>
+      <td style="font-family:monospace;font-size:11px;font-weight:600;white-space:nowrap">${c.id}</td>
+      <td><strong>${c.name}</strong><br><span style="font-size:11px;color:var(--text3)">${c.mobile}</span></td>
+      <td><strong>${c.product}</strong><br><span style="font-size:11px;color:var(--text3)">${c.brand||''} ${c.model||''}</span></td>
+      <td>${statusBadge(c.status)}</td>
+      <td>${c.techId?getTech(c.techId).name:'<span class="badge badge-gray">Unassigned</span>'}</td>
+      <td style="white-space:nowrap">${c.createdAt}</td>
+      <td>
+        <div style="display:flex;gap:4px;flex-wrap:wrap">
+          ${currentUser.role==='admin'&&c.status==='Registered'?`<button class="btn btn-primary btn-sm" onclick="openAssign('${c.id}')">Assign</button>`:''}
+          ${['Registered','Assigned','In Progress'].includes(c.status)?`<button class="btn btn-outline btn-sm" onclick="openStatus('${c.id}')">Update</button>`:''}
+          ${c.status==='Completed'?`<button class="btn btn-orange btn-sm" onclick="showInvoice('${c.id}')">Invoice</button>`:''}
+          <button class="btn btn-outline btn-sm" onclick="viewHistory('${c.id}')">Log</button>
+        </div>
+      </td>
+    </tr>`).join('')}
+    </tbody>
+  </table></div></div>`;
+}
+
+function openAssign(id){
+  assigningId=id;
+  const techOpts=DB.users.filter(u=>u.role==='technician').map(t=>`<option value="${t.id}">${t.name} (${t.mobile})</option>`).join('');
+  if(!techOpts){ alert('No technicians found. Please add technicians in Users section.'); return; }
+  document.getElementById('a-tech').innerHTML=techOpts;
+  document.getElementById('a-date').value='';
+  document.getElementById('a-notes').value='';
+  showModal('assign-modal');
+}
+
+function confirmAssign(){
+  const techId=document.getElementById('a-tech').value;
+  const date=document.getElementById('a-date').value;
+  if(!techId||!date){ alert('Please select a technician and visit date/time.'); return; }
+  const c=DB.complaints.find(x=>x.id===assigningId);
+  c.techId=techId; c.visitDate=date; c.status='Assigned';
+  c.notes=document.getElementById('a-notes').value;
+  c.history.push({date:today(),action:`Assigned to ${getTech(techId).name}. Visit: ${fmtDate(date)}`,by:currentUser.name});
+  saveDB(); closeModal('assign-modal'); renderComplaints();
+}
+
+function onStatusChange(val){
+  document.getElementById('st-cancel-wrap').classList.toggle('hidden', val!=='Cancelled');
+  document.getElementById('st-complete-wrap').classList.toggle('hidden', val!=='Completed');
+  if(val==='Completed'){
+    const c=DB.complaints.find(x=>x.id===statusId);
+    buildServicePartLines(c);
+  }
+}
+
+function openStatus(id){
+  statusId=id;
+  const c=DB.complaints.find(x=>x.id===id);
+  const st=document.getElementById('st-status');
+  st.value=c.status;
+  document.getElementById('st-remarks').value='';
+  document.getElementById('st-reason').value='';
+  document.getElementById('st-cancel-wrap').classList.add('hidden');
+  document.getElementById('st-complete-wrap').classList.add('hidden');
+  if(c.status==='Completed'){ document.getElementById('st-complete-wrap').classList.remove('hidden'); buildServicePartLines(c); }
+  if(c.status==='Cancelled'){ document.getElementById('st-cancel-wrap').classList.remove('hidden'); }
+  showModal('status-modal');
+}
+
+function buildServicePartLines(c){
+  let shtml='', phtml='';
+  const svcs=(c.services&&c.services.length)?c.services:[{svcId:'',qty:1}];
+  svcs.forEach(s=>{
+    shtml+=`<div class="flex gap-2" style="margin-bottom:6px">
+      <select class="svc-sel" style="flex:1"><option value="">-- Select service --</option>${DB.services.map(sv=>`<option value="${sv.id}" ${sv.id===s.svcId?'selected':''}>${sv.name} (${fmt(sv.price)})</option>`).join('')}</select>
+      <input type="number" class="svc-qty" value="${s.qty||1}" min="1" style="width:64px" title="Quantity">
+      <button class="btn btn-outline btn-sm" onclick="this.parentNode.remove()" title="Remove">×</button>
+    </div>`;
+  });
+  const parts=(c.parts&&c.parts.length)?c.parts:[{partId:'',qty:1}];
+  parts.forEach(p=>{
+    phtml+=`<div class="flex gap-2" style="margin-bottom:6px">
+      <select class="part-sel" style="flex:1"><option value="">-- Select part --</option>${DB.parts.map(pt=>`<option value="${pt.id}" ${pt.id===p.partId?'selected':''}>${pt.name} (${fmt(pt.price)})</option>`).join('')}</select>
+      <input type="number" class="part-qty" value="${p.qty||1}" min="1" style="width:64px" title="Quantity">
+      <button class="btn btn-outline btn-sm" onclick="this.parentNode.remove()" title="Remove">×</button>
+    </div>`;
+  });
+  document.getElementById('st-services-list').innerHTML=shtml;
+  document.getElementById('st-parts-list').innerHTML=phtml;
+  if(c.payment) document.getElementById('st-payment').value=c.payment;
+}
+
+function addServiceLine(){
+  const div=document.createElement('div');div.className='flex gap-2';div.style.marginBottom='6px';
+  div.innerHTML=`<select class="svc-sel" style="flex:1"><option value="">-- Select service --</option>${DB.services.map(s=>`<option value="${s.id}">${s.name} (${fmt(s.price)})</option>`).join('')}</select><input type="number" class="svc-qty" value="1" min="1" style="width:64px"><button class="btn btn-outline btn-sm" onclick="this.parentNode.remove()">×</button>`;
+  document.getElementById('st-services-list').appendChild(div);
+}
+
+function addPartLine(){
+  const div=document.createElement('div');div.className='flex gap-2';div.style.marginBottom='6px';
+  div.innerHTML=`<select class="part-sel" style="flex:1"><option value="">-- Select part --</option>${DB.parts.map(p=>`<option value="${p.id}">${p.name} (${fmt(p.price)})</option>`).join('')}</select><input type="number" class="part-qty" value="1" min="1" style="width:64px"><button class="btn btn-outline btn-sm" onclick="this.parentNode.remove()">×</button>`;
+  document.getElementById('st-parts-list').appendChild(div);
+}
+
+function confirmStatus(){
+  const newStatus=document.getElementById('st-status').value;
+  const remarks=document.getElementById('st-remarks').value;
+  const c=DB.complaints.find(x=>x.id===statusId);
+  if(newStatus==='Cancelled'){
+    const reason=document.getElementById('st-reason').value.trim();
+    if(!reason){ alert('Cancellation reason is required.'); return; }
+    c.cancelReason=reason;
+  }
+  if(newStatus==='Completed'){
+    const svcs=[...document.querySelectorAll('#st-services-list .flex')].map(row=>{
+      const sel=row.querySelector('.svc-sel'),qty=row.querySelector('.svc-qty');
+      return sel&&sel.value?{svcId:sel.value,qty:parseInt(qty?.value||1)}:null;
+    }).filter(Boolean);
+    const parts=[...document.querySelectorAll('#st-parts-list .flex')].map(row=>{
+      const sel=row.querySelector('.part-sel'),qty=row.querySelector('.part-qty');
+      return sel&&sel.value?{partId:sel.value,qty:parseInt(qty?.value||1)}:null;
+    }).filter(Boolean);
+    c.services=svcs; c.parts=parts;
+    c.payment=document.getElementById('st-payment').value;
+    if(!c.invoiceNo){
+      const n=DB.complaints.filter(x=>x.invoiceNo).length+1;
+      c.invoiceNo='INV-'+String(n).padStart(4,'0');
+    }
+    // Reduce stock
+    parts.forEach(p=>{ const pt=DB.parts.find(x=>x.id===p.partId); if(pt) pt.stock=Math.max(0,pt.stock-p.qty); });
+  }
+  c.status=newStatus; c.remarks=remarks;
+  c.history.push({date:today(),action:`Status → ${newStatus}${remarks?' | '+remarks:''}`,by:currentUser.name});
+  saveDB(); closeModal('status-modal');
+  if(currentUser.role==='admin') renderComplaints(); else renderMyComplaints();
+}
+
+function viewHistory(id){
+  const c=DB.complaints.find(x=>x.id===id);
+  document.getElementById('history-content').innerHTML=`
+    <div style="margin-bottom:12px"><strong>${c.id}</strong> — ${c.name} (${c.product})</div>
+    ${c.history.map((h,i)=>`<div style="display:flex;gap:12px;padding:10px 0;border-bottom:1px solid #f3f4f6">
+      <div style="width:24px;height:24px;border-radius:50%;background:var(--blue-light);color:var(--blue);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">${i+1}</div>
+      <div><div style="font-size:13px">${h.action}</div><div style="font-size:11px;color:var(--text3);margin-top:2px">${h.date} · by ${h.by}</div></div>
+    </div>`).join('')}
+    ${c.cancelReason?`<div class="alert alert-error" style="margin-top:12px"><strong>Cancellation Reason:</strong> ${c.cancelReason}</div>`:''}`;
+  showModal('history-modal');
+}
+
+// ===========================
+// INVOICE
+// ===========================
+function showInvoice(id){
+  invoiceComplaintId=id;
+  const c=DB.complaints.find(x=>x.id===id);
+  const total=calcComplaintTotal(c);
+  const techEarn=calcTechEarning(c);
+  const adminShare=calcAdminShare(c);
+  let rows='';
+  (c.services||[]).forEach(s=>{ const sv=getSvc(s.svcId); if(sv.name) rows+=`<tr><td>${sv.name}</td><td style="text-align:center">${s.qty}</td><td style="text-align:right">${fmt(sv.price)}</td><td style="text-align:right">${fmt(sv.price*s.qty)}</td></tr>`; });
+  (c.parts||[]).forEach(p=>{ const pt=getPart(p.partId); if(pt.name) rows+=`<tr><td>${pt.name} <span style="font-size:10px;color:var(--text3)">(Part)</span></td><td style="text-align:center">${p.qty}</td><td style="text-align:right">${fmt(pt.price)}</td><td style="text-align:right">${fmt(pt.price*p.qty)}</td></tr>`; });
+
+  document.getElementById('invoice-content').innerHTML=`
+  <div class="inv-header">
+    <div class="flex justify-between items-center flex-wrap gap-3">
+      <div>
+        <div style="font-size:22px;font-weight:800">⚡ Rudra Group</div>
+        <div style="font-size:12px;opacity:.8">Electronics Sales & Service</div>
+        <div style="font-size:11px;opacity:.65;margin-top:2px">Rajkot, Gujarat — 360001<br>Ph: 9999999999 | GST: 24XXXXX1234X1Z5</div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-size:11px;opacity:.7;letter-spacing:.1em">SERVICE INVOICE</div>
+        <div style="font-size:20px;font-weight:700">${c.invoiceNo}</div>
+        <div style="font-size:11px;opacity:.7">${today()}</div>
+      </div>
+    </div>
+  </div>
+  <div class="inv-body">
+    <div class="grid-2" style="margin-bottom:16px">
+      <div>
+        <div style="font-size:10px;font-weight:700;letter-spacing:.08em;color:var(--text3);margin-bottom:6px">BILL TO</div>
+        <div style="font-weight:700;font-size:15px">${c.name}</div>
+        <div style="font-size:12px;color:var(--text3)">${c.mobile}${c.alt?' / '+c.alt:''}</div>
+        <div style="font-size:12px;color:var(--text3);margin-top:4px">${c.address}</div>
+      </div>
+      <div>
+        <div style="font-size:10px;font-weight:700;letter-spacing:.08em;color:var(--text3);margin-bottom:6px">SERVICE INFO</div>
+        <div style="font-size:12px"><strong>Complaint ID:</strong> ${c.id}</div>
+        <div style="font-size:12px"><strong>Product:</strong> ${c.product} — ${c.brand} ${c.model}</div>
+        <div style="font-size:12px"><strong>Technician:</strong> ${getTech(c.techId).name}</div>
+        <div style="font-size:12px"><strong>Visit Date:</strong> ${fmtDate(c.visitDate)}</div>
+        <div style="font-size:12px"><strong>Payment:</strong> ${c.payment||'Cash'}</div>
+      </div>
+    </div>
+    <table style="border:1px solid var(--gray-border);border-radius:6px;overflow:hidden">
+      <thead><tr><th>Description</th><th style="text-align:center;width:60px">Qty</th><th style="text-align:right;width:90px">Rate</th><th style="text-align:right;width:90px">Amount</th></tr></thead>
+      <tbody>${rows||'<tr><td colspan="4" style="text-align:center;color:var(--text3);padding:16px">No items recorded</td></tr>'}</tbody>
+    </table>
+    <div class="inv-total">Total Amount: ${fmt(total)}</div>
+    <div style="background:var(--gray-light);border-radius:6px;padding:12px;margin-top:12px;font-size:12px;line-height:1.6">
+      <strong>Issue reported:</strong> ${c.desc}<br>
+      <strong>Work done:</strong> ${c.remarks||'Service completed successfully.'}
+    </div>
+    <div style="margin-top:16px;text-align:center;font-size:11px;color:var(--text3);line-height:1.8">
+      Thank you for choosing Rudra Group Electronics Service<br>
+      For any queries, call: <strong>9999999999</strong> | This is a computer generated invoice
+    </div>
+  </div>`;
+  showModal('invoice-modal');
+}
+
+function shareWA(){
+  const c=DB.complaints.find(x=>x.id===invoiceComplaintId);
+  const total=calcComplaintTotal(c);
+  const msg=encodeURIComponent(
+    `*Rudra Group Electronics Service*\n` +
+    `━━━━━━━━━━━━━━━\n` +
+    `📋 *Invoice: ${c.invoiceNo}*\n` +
+    `Complaint ID: ${c.id}\n` +
+    `Customer: ${c.name}\n` +
+    `Product: ${c.product} (${c.brand} ${c.model})\n` +
+    `Technician: ${getTech(c.techId).name}\n` +
+    `━━━━━━━━━━━━━━━\n` +
+    `*Total: ₹${total.toLocaleString('en-IN')}*\n` +
+    `Payment: ${c.payment||'Cash'}\n` +
+    `━━━━━━━━━━━━━━━\n` +
+    `Thank you for choosing Rudra Group! 🙏`
+  );
+  window.open(`https://wa.me/${c.mobile}?text=${msg}`,'_blank');
+}
+
+function downloadInvoicePDF(){
+  const c=DB.complaints.find(x=>x.id===invoiceComplaintId);
+  const total=calcComplaintTotal(c);
+  const {jsPDF}=window.jspdf;
+  const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  const W=210, margin=14;
+
+  // Header background
+  doc.setFillColor(30,66,159);
+  doc.rect(0,0,W,42,'F');
+  doc.setTextColor(255,255,255);
+  doc.setFont('helvetica','bold');doc.setFontSize(20);doc.text('Rudra Group',margin,16);
+  doc.setFont('helvetica','normal');doc.setFontSize(9);doc.text('Electronics Sales & Service',margin,22);
+  doc.text('Rajkot, Gujarat - 360001  |  Ph: 9999999999  |  GST: 24XXXXX1234X1Z5',margin,28);
+  doc.setFont('helvetica','bold');doc.setFontSize(14);doc.text('SERVICE INVOICE',W-margin,14,{align:'right'});
+  doc.setFontSize(18);doc.text(c.invoiceNo,W-margin,24,{align:'right'});
+  doc.setFont('helvetica','normal');doc.setFontSize(9);doc.text(today(),W-margin,31,{align:'right'});
+
+  doc.setTextColor(30,30,30);
+
+  // Bill To
+  let y=52;
+  doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(100,100,100);doc.text('BILL TO',margin,y);
+  doc.setTextColor(30,30,30);doc.setFontSize(11);doc.setFont('helvetica','bold');y+=6;doc.text(c.name,margin,y);
+  doc.setFont('helvetica','normal');doc.setFontSize(9);y+=5;doc.text(c.mobile+(c.alt?' / '+c.alt:''),margin,y);
+  y+=5;doc.text(c.address.slice(0,60),margin,y);
+
+  // Service Info
+  let y2=52;const rx=W/2+5;
+  doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(100,100,100);doc.text('SERVICE INFO',rx,y2);
+  doc.setTextColor(30,30,30);doc.setFont('helvetica','normal');doc.setFontSize(9);
+  y2+=6;doc.text('Complaint ID: '+c.id,rx,y2);
+  y2+=5;doc.text('Product: '+c.product+' — '+c.brand+' '+c.model,rx,y2);
+  y2+=5;doc.text('Technician: '+getTech(c.techId).name,rx,y2);
+  y2+=5;doc.text('Visit Date: '+fmtDate(c.visitDate),rx,y2);
+  y2+=5;doc.text('Payment Mode: '+(c.payment||'Cash'),rx,y2);
+
+  // Divider
+  y=Math.max(y,y2)+8;
+  doc.setDrawColor(220,220,220);doc.line(margin,y,W-margin,y);y+=8;
+
+  // Table header
+  doc.setFillColor(245,247,250);doc.rect(margin,y-4,W-margin*2,8,'F');
+  doc.setFont('helvetica','bold');doc.setFontSize(9);doc.setTextColor(80,80,80);
+  doc.text('Description',margin+2,y);doc.text('Qty',130,y,{align:'center'});doc.text('Rate',155,y,{align:'right'});doc.text('Amount',W-margin,y,{align:'right'});
+  y+=8;doc.line(margin,y-4,W-margin,y-4);
+
+  doc.setFont('helvetica','normal');doc.setTextColor(30,30,30);doc.setFontSize(10);
+  (c.services||[]).forEach(s=>{
+    const sv=getSvc(s.svcId);if(!sv.name)return;
+    doc.text(sv.name,margin+2,y);doc.text(String(s.qty),130,y,{align:'center'});
+    doc.text('Rs.'+sv.price,155,y,{align:'right'});doc.text('Rs.'+(sv.price*s.qty),W-margin,y,{align:'right'});
+    y+=7;
+  });
+  (c.parts||[]).forEach(p=>{
+    const pt=getPart(p.partId);if(!pt.name)return;
+    doc.text(pt.name+' (Part)',margin+2,y);doc.text(String(p.qty),130,y,{align:'center'});
+    doc.text('Rs.'+pt.price,155,y,{align:'right'});doc.text('Rs.'+(pt.price*p.qty),W-margin,y,{align:'right'});
+    y+=7;
+  });
+
+  doc.line(margin,y,W-margin,y);y+=7;
+  doc.setFont('helvetica','bold');doc.setFontSize(12);
+  doc.text('Total Amount: Rs.'+total,W-margin,y,{align:'right'});
+
+  y+=12;
+  doc.setFillColor(249,250,251);doc.rect(margin,y-4,W-margin*2,18,'F');
+  doc.setFont('helvetica','bold');doc.setFontSize(9);doc.setTextColor(50,50,50);y+=2;
+  doc.text('Issue: ',margin+2,y);doc.setFont('helvetica','normal');doc.text(c.desc.slice(0,80),margin+16,y);
+  y+=6;doc.setFont('helvetica','bold');doc.text('Work Done: ',margin+2,y);doc.setFont('helvetica','normal');
+  doc.text((c.remarks||'Service completed successfully.').slice(0,70),margin+26,y);
+
+  y+=16;doc.setFont('helvetica','italic');doc.setFontSize(8);doc.setTextColor(130,130,130);
+  doc.text('Thank you for choosing Rudra Group Electronics Service. For support call: 9999999999',W/2,y,{align:'center'});
+  y+=5;doc.text('This is a computer generated invoice. No signature required.',W/2,y,{align:'center'});
+
+  doc.save((c.invoiceNo||'invoice')+'.pdf');
+}
+
+// ===========================
+// PUBLIC COMPLAINT
+// ===========================
+function showPublicRegister(){
+  document.getElementById('pub-success').classList.add('hidden');
+  ['p-name','p-mobile','p-alt','p-address','p-desc','p-brand','p-model'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('p-product').value='';
+  document.getElementById('p-date').value='';
+  showModal('public-complaint-modal');
+}
+
+function submitPublicComplaint(){
+  const name=document.getElementById('p-name').value.trim();
+  const mobile=document.getElementById('p-mobile').value.trim();
+  const address=document.getElementById('p-address').value.trim();
+  const product=document.getElementById('p-product').value;
+  const desc=document.getElementById('p-desc').value.trim();
+  if(!name||!mobile||!address||!product||!desc){ alert('Please fill all required fields (marked with *).'); return; }
+  if(!/^\d{10}$/.test(mobile)){ alert('Please enter a valid 10-digit mobile number.'); return; }
+  const year=new Date().getFullYear();
+  const num=String(DB.complaints.length+1).padStart(4,'0');
+  const id=`SVC-${year}-${num}`;
+  DB.complaints.push({
+    id, name, mobile,
+    alt:document.getElementById('p-alt').value.trim(),
+    address, product,
+    brand:document.getElementById('p-brand').value.trim(),
+    model:document.getElementById('p-model').value.trim(),
+    desc, prefDate:document.getElementById('p-date').value,
+    status:'Registered', techId:'', visitDate:'', notes:'',
+    createdAt:today(), cancelReason:'',
+    history:[{date:today(),action:'Complaint Registered via online form',by:name}],
+    services:[], parts:[], payment:'', invoiceNo:'', remarks:''
+  });
+  saveDB();
+  document.getElementById('pub-success').innerHTML=`
+    ✅ <strong>Complaint Registered Successfully!</strong><br>
+    Your Complaint ID: <strong style="font-size:16px;font-family:monospace">${id}</strong><br>
+    <span style="font-size:12px">Please save this ID to track your complaint status.</span>`;
+  document.getElementById('pub-success').classList.remove('hidden');
+  setTimeout(()=>{ closeModal('public-complaint-modal'); if(currentUser?.role==='admin') renderComplaints(); }, 4000);
+}
+
+// ===========================
+// TECHNICIANS
+// ===========================
+function renderTechnicians(){
+  const techs=DB.users.filter(u=>u.role==='technician');
+  document.getElementById('page-technicians').innerHTML=`
+  <div class="page-title">👷 Technician Overview</div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:16px">
+  ${techs.map(t=>{
+    const jobs=DB.complaints.filter(c=>c.techId===t.id);
+    const done=jobs.filter(c=>c.status==='Completed').length;
+    const active=jobs.filter(c=>['Assigned','In Progress'].includes(c.status)).length;
+    const pay=techPayable(t.id);
+    const rev=jobs.filter(c=>c.status==='Completed').reduce((a,c)=>a+calcTechEarning(c),0);
+    return `<div class="card">
+      <div class="flex items-center gap-3" style="margin-bottom:14px">
+        <div style="width:44px;height:44px;border-radius:50%;background:var(--blue-light);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--blue);font-size:18px;flex-shrink:0">${t.name[0]}</div>
+        <div><div style="font-weight:700;font-size:15px">${t.name}</div><div style="font-size:12px;color:var(--text3)">${t.mobile} · ${t.email}</div></div>
+      </div>
+      <div class="grid-2" style="text-align:center;gap:8px;margin-bottom:14px">
+        <div style="background:var(--gray-light);padding:10px;border-radius:6px"><div style="font-size:20px;font-weight:700">${jobs.length}</div><div style="font-size:11px;color:var(--text3)">Total Jobs</div></div>
+        <div style="background:var(--green-light);padding:10px;border-radius:6px"><div style="font-size:20px;font-weight:700;color:var(--green)">${done}</div><div style="font-size:11px;color:var(--green)">Completed</div></div>
+      </div>
+      <div class="earnings-row"><span>Active Jobs</span><strong>${active}</strong></div>
+      <div class="earnings-row"><span>Total Earned</span><strong>${fmt(rev)}</strong></div>
+      <div class="earnings-row"><span>Due to Admin</span><strong style="color:${pay.balance>0?'var(--red)':'var(--green)'}">${fmt(pay.balance)}</strong></div>
+    </div>`;
+  }).join('')}
+  ${techs.length===0?'<div class="card"><p style="color:var(--text3)">No technicians added yet. Go to Users to add technicians.</p></div>':''}
+  </div>`;
+}
+
+// ===========================
+// SERVICES
+// ===========================
+function renderServices(){
+  document.getElementById('page-services').innerHTML=`
+  <div class="flex justify-between items-center" style="margin-bottom:16px;flex-wrap:wrap;gap:8px">
+    <div class="page-title" style="margin:0">🔧 Services & Pricing</div>
+    <button class="btn btn-primary" onclick="openServiceModal()">+ Add Service</button>
+  </div>
+  <div class="card" style="padding:0;overflow:hidden">
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>Service Name</th><th>Price</th><th>Split Type</th><th>Admin Share</th><th>Tech Share</th><th>Actions</th></tr></thead>
+    <tbody>${DB.services.map(s=>{
+      const aShare=s.splitType==='percent'?`${s.adminVal}% = ${fmt(s.price*s.adminVal/100)}`:`${fmt(s.adminVal)}`;
+      const tShare=s.splitType==='percent'?`${s.techVal}% = ${fmt(s.price*s.techVal/100)}`:`${fmt(s.techVal)}`;
+      return `<tr>
+        <td><strong>${s.name}</strong></td>
+        <td style="font-weight:600">${fmt(s.price)}</td>
+        <td><span class="badge badge-blue">${s.splitType==='percent'?'Percentage':'Fixed'}</span></td>
+        <td>${aShare}</td>
+        <td>${tShare}</td>
+        <td>
+          <button class="btn btn-outline btn-sm" onclick="openServiceModal('${s.id}')">Edit</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteService('${s.id}')">Del</button>
+        </td>
+      </tr>`;
+    }).join('')}
+    ${DB.services.length===0?'<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--text3)">No services added</td></tr>':''}
+    </tbody>
+  </table></div></div>`;
+}
+
+function openServiceModal(id){
+  editingSvcId=id||null;
+  const s=id?DB.services.find(x=>x.id===id):{};
+  document.getElementById('sm-title').textContent=id?'Edit Service':'Add Service';
+  document.getElementById('sm-name').value=s.name||'';
+  document.getElementById('sm-price').value=s.price||'';
+  document.getElementById('sm-split-type').value=s.splitType||'percent';
+  document.getElementById('sm-admin').value=s.adminVal||'';
+  document.getElementById('sm-tech').value=s.techVal||'';
+  toggleSplitType(); updateSplitPreview();
+  document.getElementById('sm-price').oninput=updateSplitPreview;
+  document.getElementById('sm-admin').oninput=updateSplitPreview;
+  document.getElementById('sm-tech').oninput=updateSplitPreview;
+  showModal('service-modal');
+}
+
+function toggleSplitType(){
+  const t=document.getElementById('sm-split-type').value;
+  document.getElementById('sm-admin-label').textContent=t==='percent'?'Admin Share (%) *':'Admin Fixed Amount (₹) *';
+  document.getElementById('sm-tech-label').textContent=t==='percent'?'Tech Share (%) *':'Tech Fixed Amount (₹) *';
+  updateSplitPreview();
+}
+
+function updateSplitPreview(){
+  const price=parseFloat(document.getElementById('sm-price').value)||0;
+  const t=document.getElementById('sm-split-type').value;
+  const a=parseFloat(document.getElementById('sm-admin').value)||0;
+  const tech=parseFloat(document.getElementById('sm-tech').value)||0;
+  let html='';
+  if(price>0){
+    const aAmt=t==='percent'?price*a/100:a;
+    const tAmt=t==='percent'?price*tech/100:tech;
+    html=`For a job of <strong>${fmt(price)}</strong>: Admin gets <strong>${fmt(aAmt)}</strong>, Technician gets <strong>${fmt(tAmt)}</strong>`;
+  }
+  document.getElementById('sm-preview').innerHTML=html||'Enter price and split values to see preview';
+}
+
+function saveService(){
+  const name=document.getElementById('sm-name').value.trim();
+  const price=parseFloat(document.getElementById('sm-price').value);
+  const splitType=document.getElementById('sm-split-type').value;
+  const adminVal=parseFloat(document.getElementById('sm-admin').value);
+  const techVal=parseFloat(document.getElementById('sm-tech').value);
+  if(!name||isNaN(price)||isNaN(adminVal)||isNaN(techVal)){ alert('Please fill all fields.'); return; }
+  if(editingSvcId){ Object.assign(DB.services.find(x=>x.id===editingSvcId),{name,price,splitType,adminVal,techVal}); }
+  else DB.services.push({id:'s'+Date.now(),name,price,splitType,adminVal,techVal});
+  saveDB(); closeModal('service-modal'); renderServices();
+}
+
+function deleteService(id){
+  if(!confirm('Delete this service?')) return;
+  DB.services=DB.services.filter(s=>s.id!==id); saveDB(); renderServices();
+}
+
+// ===========================
+// INVENTORY
+// ===========================
+function renderInventory(){
+  const totalVal=DB.parts.reduce((a,p)=>a+p.price*p.stock,0);
+  document.getElementById('page-inventory').innerHTML=`
+  <div class="flex justify-between items-center" style="margin-bottom:16px;flex-wrap:wrap;gap:8px">
+    <div class="page-title" style="margin:0">📦 Parts & Inventory <span style="font-size:13px;font-weight:400;color:var(--text3)">Total value: ${fmt(totalVal)}</span></div>
+    <button class="btn btn-primary" onclick="openPartModal()">+ Add Part</button>
+  </div>
+  <div class="card" style="padding:0;overflow:hidden">
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>Part Name</th><th>Unit Price</th><th>Stock Qty</th><th>Stock Value</th><th>Status</th><th>Actions</th></tr></thead>
+    <tbody>${DB.parts.map(p=>`<tr>
+      <td><strong>${p.name}</strong></td>
+      <td>${fmt(p.price)}</td>
+      <td class="${p.stock<=3?'low-stock':''}">${p.stock}</td>
+      <td>${fmt(p.price*p.stock)}</td>
+      <td>${p.stock===0?'<span class="badge badge-red">Out of Stock</span>':p.stock<=3?'<span class="badge badge-amber">⚠ Low Stock</span>':'<span class="badge badge-green">In Stock</span>'}</td>
+      <td>
+        <button class="btn btn-outline btn-sm" onclick="openPartModal('${p.id}')">Edit</button>
+        <button class="btn btn-outline btn-sm" onclick="adjustStock('${p.id}')">+/- Stock</button>
+        <button class="btn btn-danger btn-sm" onclick="deletePart('${p.id}')">Del</button>
+      </td>
+    </tr>`).join('')}
+    ${DB.parts.length===0?'<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--text3)">No parts added</td></tr>':''}
+    </tbody>
+  </table></div></div>`;
+}
+
+function openPartModal(id){
+  editingPartId=id||null;
+  const p=id?DB.parts.find(x=>x.id===id):{};
+  document.getElementById('pm-title').textContent=id?'Edit Part':'Add Part / Equipment';
+  document.getElementById('pm-name').value=p.name||'';
+  document.getElementById('pm-price').value=p.price||'';
+  document.getElementById('pm-stock').value=p.stock||'';
+  showModal('part-modal');
+}
+
+function savePart(){
+  const name=document.getElementById('pm-name').value.trim();
+  const price=parseFloat(document.getElementById('pm-price').value);
+  const stock=parseInt(document.getElementById('pm-stock').value);
+  if(!name||isNaN(price)||isNaN(stock)){ alert('Please fill all fields.'); return; }
+  if(editingPartId){ Object.assign(DB.parts.find(x=>x.id===editingPartId),{name,price,stock}); }
+  else DB.parts.push({id:'p'+Date.now(),name,price,stock});
+  saveDB(); closeModal('part-modal'); renderInventory();
+}
+
+function adjustStock(id){
+  const p=DB.parts.find(x=>x.id===id);
+  const val=prompt(`Adjust stock for:\n"${p.name}"\n\nCurrent stock: ${p.stock}\nEnter new quantity:`,p.stock);
+  if(val===null) return;
+  const n=parseInt(val);
+  if(isNaN(n)||n<0){ alert('Invalid quantity'); return; }
+  p.stock=n; saveDB(); renderInventory();
+}
+
+function deletePart(id){
+  if(!confirm('Delete this part from inventory?')) return;
+  DB.parts=DB.parts.filter(p=>p.id!==id); saveDB(); renderInventory();
+}
+
+// ===========================
+// BILLING
+// ===========================
+function renderBilling(){
+  const done=DB.complaints.filter(c=>c.status==='Completed');
+  const total=done.reduce((a,c)=>a+calcComplaintTotal(c),0);
+  document.getElementById('page-billing').innerHTML=`
+  <div class="flex justify-between items-center" style="margin-bottom:16px">
+    <div class="page-title" style="margin:0">🧾 Billing & Invoices</div>
+    <div style="font-size:13px;color:var(--text3)">Total billed: <strong>${fmt(total)}</strong> across ${done.length} jobs</div>
+  </div>
+  <div class="card" style="padding:0;overflow:hidden">
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>Invoice No</th><th>Complaint ID</th><th>Customer</th><th>Product</th><th>Technician</th><th>Amount</th><th>Payment</th><th>Date</th><th>Actions</th></tr></thead>
+    <tbody>${done.map(c=>`<tr>
+      <td style="font-family:monospace;font-weight:600">${c.invoiceNo}</td>
+      <td style="font-family:monospace;font-size:11px">${c.id}</td>
+      <td>${c.name}</td>
+      <td>${c.product}</td>
+      <td>${getTech(c.techId).name}</td>
+      <td style="font-weight:600">${fmt(calcComplaintTotal(c))}</td>
+      <td><span class="badge badge-green">${c.payment||'Cash'}</span></td>
+      <td>${c.createdAt}</td>
+      <td><button class="btn btn-orange btn-sm" onclick="showInvoice('${c.id}')">View / PDF</button></td>
+    </tr>`).join('')}
+    ${done.length===0?'<tr><td colspan="9" style="text-align:center;color:var(--text3);padding:24px">No completed jobs yet</td></tr>':''}
+    </tbody>
+  </table></div></div>`;
+}
+
+// ===========================
+// PAYABLES
+// ===========================
+function renderPayables(){
+  const techs=DB.users.filter(u=>u.role==='technician');
+  const totalDue=techs.reduce((a,t)=>a+Math.max(0,techPayable(t.id).balance),0);
+  document.getElementById('page-payables').innerHTML=`
+  <div class="flex justify-between items-center" style="margin-bottom:16px">
+    <div class="page-title" style="margin:0">💰 Technician Payables</div>
+    <div style="font-size:13px"><span class="badge badge-red" style="font-size:13px;padding:4px 10px">Total Due: ${fmt(totalDue)}</span></div>
+  </div>
+  ${techs.map(t=>{
+    const pay=techPayable(t.id);
+    const payments=DB.payments.filter(p=>p.techId===t.id);
+    const jobs=DB.complaints.filter(c=>c.techId===t.id&&c.status==='Completed');
+    return `<div class="card" style="margin-bottom:16px">
+      <div class="flex justify-between items-center" style="margin-bottom:14px;flex-wrap:wrap;gap:8px">
+        <div style="font-size:16px;font-weight:700">${t.name} <span style="font-size:12px;font-weight:400;color:var(--text3)">${t.mobile}</span></div>
+        <button class="btn btn-success btn-sm" onclick="openPayment('${t.id}')">+ Record Payment</button>
+      </div>
+      <div class="grid-3" style="margin-bottom:14px">
+        <div style="background:var(--gray-light);padding:12px;border-radius:8px;text-align:center">
+          <div style="font-size:11px;color:var(--text3);margin-bottom:4px">Admin's Total Share</div>
+          <div style="font-size:20px;font-weight:700">${fmt(pay.owed)}</div>
+          <div style="font-size:10px;color:var(--text3)">(services + parts)</div>
+        </div>
+        <div style="background:var(--green-light);padding:12px;border-radius:8px;text-align:center">
+          <div style="font-size:11px;color:var(--green);margin-bottom:4px">Paid to Admin</div>
+          <div style="font-size:20px;font-weight:700;color:var(--green)">${fmt(pay.paid)}</div>
+        </div>
+        <div style="background:${pay.balance>0?'var(--red-light)':'var(--green-light)'};padding:12px;border-radius:8px;text-align:center">
+          <div style="font-size:11px;color:${pay.balance>0?'var(--red)':'var(--green)'};margin-bottom:4px">${pay.balance>0?'⚠ Balance Due':'✅ Fully Settled'}</div>
+          <div style="font-size:20px;font-weight:700;color:${pay.balance>0?'var(--red)':'var(--green)'}">${fmt(Math.abs(pay.balance))}</div>
+        </div>
+      </div>
+      ${jobs.length>0?`<div class="tbl-wrap"><table><thead><tr><th>Complaint</th><th>Customer</th><th>Services (Admin share)</th><th>Parts Cost</th><th>Total Due</th></tr></thead>
+      <tbody>${jobs.map(c=>{
+        const svcAdm=calcAdminShare(c)-(c.parts||[]).reduce((a,p)=>a+(getPart(p.partId).price||0)*(p.qty||1),0);
+        const partsCost=(c.parts||[]).reduce((a,p)=>a+(getPart(p.partId).price||0)*(p.qty||1),0);
+        return `<tr>
+          <td style="font-size:11px;font-family:monospace">${c.id}</td>
+          <td>${c.name}</td>
+          <td>${fmt(svcAdm)}</td>
+          <td>${fmt(partsCost)}</td>
+          <td style="font-weight:600">${fmt(calcAdminShare(c))}</td>
+        </tr>`;
+      }).join('')}</tbody></table></div>`:'<p style="font-size:12px;color:var(--text3)">No completed jobs yet.</p>'}
+      ${payments.length>0?`<div style="margin-top:10px;padding:10px;background:var(--green-light);border-radius:6px;font-size:12px">
+        <strong>Payment History:</strong><br>
+        ${payments.map(p=>`${p.date}: ${fmt(p.amount)} via ${p.mode}${p.notes?' ('+p.notes+')':''}`).join('<br>')}
+      </div>`:''}
+    </div>`;
+  }).join('')}
+  ${techs.length===0?'<div class="card"><p style="color:var(--text3)">No technicians found.</p></div>':''}`;
+}
+
+function openPayment(techId){
+  payingTechId=techId;
+  const t=getTech(techId);
+  const pay=techPayable(techId);
+  document.getElementById('pay-info').innerHTML=`<strong>${t.name}</strong> (${t.mobile})<br>Admin's share owed: <strong>${fmt(pay.owed)}</strong><br>Already paid: <strong style="color:var(--green)">${fmt(pay.paid)}</strong><br>Balance due: <strong style="color:var(--red)">${fmt(pay.balance)}</strong>`;
+  document.getElementById('pay-amount').value=pay.balance>0?pay.balance:'';
+  document.getElementById('pay-notes').value='';
+  showModal('payment-modal');
+}
+
+function confirmPayment(){
+  const amount=parseFloat(document.getElementById('pay-amount').value);
+  if(!amount||amount<=0){ alert('Please enter a valid amount.'); return; }
+  DB.payments.push({id:'pay'+Date.now(),techId:payingTechId,amount,mode:document.getElementById('pay-mode').value,notes:document.getElementById('pay-notes').value,date:today()});
+  saveDB(); closeModal('payment-modal'); renderPayables();
+}
+
+// ===========================
+// REPORTS
+// ===========================
+function renderReports(){
+  const done=DB.complaints.filter(c=>c.status==='Completed');
+  const totalRev=done.reduce((a,c)=>a+calcComplaintTotal(c),0);
+  const adminRev=done.reduce((a,c)=>a+calcAdminShare(c),0);
+  const techRev=done.reduce((a,c)=>a+calcTechEarning(c),0);
+  const totalPaid=DB.payments.reduce((a,p)=>a+(p.amount||0),0);
+
+  const svcCount={};
+  done.forEach(c=>(c.services||[]).forEach(s=>{ const sv=getSvc(s.svcId); if(sv.name) svcCount[sv.name]=(svcCount[sv.name]||0)+s.qty; }));
+  const topSvcs=Object.entries(svcCount).sort((a,b)=>b[1]-a[1]).slice(0,5);
+
+  const partCount={};
+  done.forEach(c=>(c.parts||[]).forEach(p=>{ const pt=getPart(p.partId); if(pt.name) partCount[pt.name]=(partCount[pt.name]||0)+p.qty; }));
+  const topParts=Object.entries(partCount).sort((a,b)=>b[1]-a[1]).slice(0,5);
+
+  const statuses=['Registered','Assigned','In Progress','Completed','Cancelled'];
+
+  document.getElementById('page-reports').innerHTML=`
+  <div class="flex justify-between items-center" style="margin-bottom:16px;flex-wrap:wrap;gap:8px">
+    <div class="page-title" style="margin:0">📈 MIS Reports & Analytics</div>
+    <button class="btn btn-outline" onclick="exportCSV()">⬇ Export CSV</button>
+  </div>
+  <div class="grid-4" style="margin-bottom:16px">
+    <div class="stat-card" style="border-left:4px solid var(--blue)"><div class="stat-label">Total Revenue</div><div class="stat-value">${fmt(totalRev)}</div></div>
+    <div class="stat-card" style="border-left:4px solid var(--green)"><div class="stat-label">Admin Revenue</div><div class="stat-value">${fmt(adminRev)}</div></div>
+    <div class="stat-card" style="border-left:4px solid var(--orange)"><div class="stat-label">Tech Total Earned</div><div class="stat-value">${fmt(techRev)}</div></div>
+    <div class="stat-card" style="border-left:4px solid var(--amber)"><div class="stat-label">Cash Collected</div><div class="stat-value">${fmt(totalPaid)}</div><div class="stat-sub">from technicians</div></div>
+  </div>
+  <div class="grid-2" style="margin-bottom:16px">
+    <div class="card">
+      <div class="card-header">Complaint Status Breakdown</div>
+      ${statuses.map(s=>{
+        const cnt=DB.complaints.filter(c=>c.status===s).length;
+        const pct=DB.complaints.length?Math.round(cnt/DB.complaints.length*100):0;
+        const w=pct;
+        return `<div style="margin-bottom:10px">
+          <div class="flex justify-between" style="margin-bottom:4px"><span>${statusBadge(s)}</span><strong>${cnt} (${pct}%)</strong></div>
+          <div style="height:6px;background:var(--gray-light);border-radius:3px"><div style="height:6px;background:var(--blue);border-radius:3px;width:${w}%"></div></div>
+        </div>`;
+      }).join('')}
+    </div>
+    <div class="card">
+      <div class="card-header">Top Services Performed</div>
+      ${topSvcs.map(([name,cnt])=>`<div class="earnings-row"><span>${name}</span><strong>${cnt}x</strong></div>`).join('')}
+      ${topSvcs.length===0?'<p style="color:var(--text3);font-size:13px">No data yet</p>':''}
+      <hr class="section-divider">
+      <div style="font-weight:600;margin-bottom:8px;font-size:13px">Top Parts Used</div>
+      ${topParts.map(([name,cnt])=>`<div class="earnings-row"><span>${name}</span><strong>${cnt} units</strong></div>`).join('')}
+      ${topParts.length===0?'<p style="color:var(--text3);font-size:13px">No data yet</p>':''}
+    </div>
+  </div>
+  <div class="grid-2" style="margin-bottom:16px">
+    <div class="card">
+      <div class="card-header">Technician Performance</div>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Technician</th><th>Jobs</th><th>Done</th><th>Revenue</th><th>Earned</th></tr></thead>
+        <tbody>${DB.users.filter(u=>u.role==='technician').map(t=>{
+          const jobs=DB.complaints.filter(c=>c.techId===t.id);
+          const d=jobs.filter(c=>c.status==='Completed');
+          const rev=d.reduce((a,c)=>a+calcComplaintTotal(c),0);
+          const earn=d.reduce((a,c)=>a+calcTechEarning(c),0);
+          return `<tr><td>${t.name}</td><td>${jobs.length}</td><td>${d.length}</td><td>${fmt(rev)}</td><td>${fmt(earn)}</td></tr>`;
+        }).join('')}
+        ${DB.users.filter(u=>u.role==='technician').length===0?'<tr><td colspan="5" style="color:var(--text3)">No technicians</td></tr>':''}
+        </tbody>
+      </table></div>
+    </div>
+    <div class="card">
+      <div class="card-header">Inventory Status</div>
+      ${DB.parts.map(p=>`<div class="earnings-row">
+        <span>${p.name}</span>
+        <span><strong class="${p.stock<=3?'low-stock':''}">${p.stock} units</strong> · ${fmt(p.price*p.stock)}</span>
+      </div>`).join('')}
+      <hr class="section-divider">
+      <div style="font-size:13px;font-weight:600">Total Inventory Value: ${fmt(DB.parts.reduce((a,p)=>a+p.price*p.stock,0))}</div>
+    </div>
+  </div>`;
+}
+
+function exportCSV(){
+  const rows=[['Complaint ID','Customer Name','Mobile','Product','Brand','Model','Status','Technician','Registered Date','Visit Date','Payment','Invoice No','Total Amount','Admin Share','Tech Earning','Description']];
+  DB.complaints.forEach(c=>rows.push([
+    c.id, c.name, c.mobile, c.product, c.brand||'', c.model||'',
+    c.status, getTech(c.techId).name, c.createdAt, c.visitDate||'',
+    c.payment||'', c.invoiceNo||'', calcComplaintTotal(c), calcAdminShare(c), calcTechEarning(c), c.desc
+  ]));
+  const csv=rows.map(r=>r.map(x=>`"${String(x).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download=`rudra_report_${today()}.csv`;a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ===========================
+// USERS
+// ===========================
+function renderUsers(){
+  document.getElementById('page-users').innerHTML=`
+  <div class="flex justify-between items-center" style="margin-bottom:16px">
+    <div class="page-title" style="margin:0">👥 User Management</div>
+    <button class="btn btn-primary" onclick="openUserModal()">+ Add User</button>
+  </div>
+  <div class="card" style="padding:0;overflow:hidden">
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>Name</th><th>Email</th><th>Mobile</th><th>Role</th><th>Actions</th></tr></thead>
+    <tbody>${DB.users.map(u=>`<tr>
+      <td><strong>${u.name}</strong>${u.id===currentUser.id?' <span class="badge badge-blue">You</span>':''}</td>
+      <td>${u.email}</td>
+      <td>${u.mobile||'—'}</td>
+      <td><span class="badge ${u.role==='admin'?'badge-blue':'badge-green'}">${u.role}</span></td>
+      <td>
+        <button class="btn btn-outline btn-sm" onclick="openUserModal('${u.id}')">Edit</button>
+        ${u.id!==currentUser.id?`<button class="btn btn-danger btn-sm" onclick="deleteUser('${u.id}')">Delete</button>`:''}
+      </td>
+    </tr>`).join('')}
+    </tbody>
+  </table></div></div>`;
+}
+
+function openUserModal(id){
+  editingUserId=id||null;
+  const u=id?DB.users.find(x=>x.id===id):{};
+  document.getElementById('um-title').textContent=id?'Edit User':'Add New User';
+  document.getElementById('um-name').value=u.name||'';
+  document.getElementById('um-email').value=u.email||'';
+  document.getElementById('um-mobile').value=u.mobile||'';
+  document.getElementById('um-role').value=u.role||'technician';
+  document.getElementById('um-pass').value='';
+  showModal('user-modal');
+}
+
+function saveUser(){
+  const name=document.getElementById('um-name').value.trim();
+  const email=document.getElementById('um-email').value.trim();
+  const mobile=document.getElementById('um-mobile').value.trim();
+  const role=document.getElementById('um-role').value;
+  const pass=document.getElementById('um-pass').value;
+  if(!name||!email){ alert('Name and email are required.'); return; }
+  if(editingUserId){
+    const u=DB.users.find(x=>x.id===editingUserId);
+    Object.assign(u,{name,email,mobile,role});
+    if(pass) u.password=pass;
+  } else {
+    if(!pass){ alert('Password is required for new users.'); return; }
+    if(DB.users.find(u=>u.email.toLowerCase()===email.toLowerCase())){ alert('A user with this email already exists.'); return; }
+    DB.users.push({id:uid(),name,email,mobile,role,password:pass});
+  }
+  saveDB(); closeModal('user-modal'); renderUsers();
+}
+
+function deleteUser(id){
+  if(id===currentUser.id){ alert("You can't delete your own account."); return; }
+  if(!confirm('Are you sure you want to delete this user?')) return;
+  DB.users=DB.users.filter(u=>u.id!==id); saveDB(); renderUsers();
+}
+
+// ===========================
+// TECHNICIAN VIEWS
+// ===========================
+function renderTechDashboard(){
+  if(!currentUser) return;
+  const myJobs=DB.complaints.filter(c=>c.techId===currentUser.id);
+  const pending=myJobs.filter(c=>['Assigned','In Progress'].includes(c.status));
+  const done=myJobs.filter(c=>c.status==='Completed');
+  const earned=done.reduce((a,c)=>a+calcTechEarning(c),0);
+  const pay=techPayable(currentUser.id);
+  document.getElementById('page-tech-dashboard').innerHTML=`
+  <div class="page-title">📊 My Dashboard — ${currentUser.name}</div>
+  <div class="grid-4" style="margin-bottom:16px">
+    <div class="stat-card"><div class="stat-label">Total Assigned</div><div class="stat-value">${myJobs.length}</div></div>
+    <div class="stat-card" style="border-left:4px solid var(--orange)"><div class="stat-label">Pending Jobs</div><div class="stat-value">${pending.length}</div></div>
+    <div class="stat-card" style="border-left:4px solid var(--green)"><div class="stat-label">Completed</div><div class="stat-value">${done.length}</div></div>
+    <div class="stat-card" style="border-left:4px solid var(--amber)"><div class="stat-label">My Earnings</div><div class="stat-value">${fmt(earned)}</div><div class="stat-sub" style="color:var(--red)">Due to admin: ${fmt(pay.balance)}</div></div>
+  </div>
+  ${pending.length===0?`<div class="alert alert-success">✅ No pending jobs right now. Great work!</div>`:''}
+  ${pending.map(c=>`<div class="card" style="margin-bottom:12px">
+    <div class="flex justify-between items-center flex-wrap gap-3">
+      <div style="flex:1">
+        <div style="font-family:monospace;font-size:11px;color:var(--text3)">${c.id}</div>
+        <div style="font-weight:700;font-size:15px;margin:4px 0">${c.name}</div>
+        <div style="font-size:12px;color:var(--text3)">📱 ${c.mobile} &nbsp; 📍 ${c.address}</div>
+        <div style="font-size:13px;margin-top:6px"><strong>${c.product}</strong> — ${c.brand} ${c.model}</div>
+        <div style="font-size:12px;margin-top:4px;padding:8px;background:var(--gray-light);border-radius:4px">${c.desc}</div>
+        ${c.notes?`<div style="font-size:12px;color:var(--blue);margin-top:4px">📝 Admin note: ${c.notes}</div>`:''}
+        ${c.visitDate?`<div style="font-size:12px;color:var(--orange);margin-top:4px">🕐 Visit: ${fmtDate(c.visitDate)}</div>`:''}
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end">
+        ${statusBadge(c.status)}
+        <button class="btn btn-primary" onclick="openStatus('${c.id}')">Update Status →</button>
+      </div>
+    </div>
+  </div>`).join('')}`;
+}
+
+function renderMyComplaints(){
+  if(!currentUser) return;
+  const myJobs=[...DB.complaints.filter(c=>c.techId===currentUser.id)].reverse();
+  document.getElementById('page-my-complaints').innerHTML=`
+  <div class="page-title">📋 My Jobs (${myJobs.length})</div>
+  <div class="card" style="padding:0;overflow:hidden">
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>Complaint ID</th><th>Customer</th><th>Product</th><th>Status</th><th>Visit Date</th><th>Amount</th><th>Actions</th></tr></thead>
+    <tbody>${myJobs.map(c=>`<tr>
+      <td style="font-family:monospace;font-size:11px;font-weight:600">${c.id}</td>
+      <td><strong>${c.name}</strong><br><span style="font-size:11px;color:var(--text3)">${c.mobile}</span></td>
+      <td>${c.product} — ${c.brand}</td>
+      <td>${statusBadge(c.status)}</td>
+      <td>${fmtDate(c.visitDate)}</td>
+      <td>${c.status==='Completed'?fmt(calcComplaintTotal(c)):'—'}</td>
+      <td>
+        ${['Assigned','In Progress'].includes(c.status)?`<button class="btn btn-primary btn-sm" onclick="openStatus('${c.id}')">Update</button>`:''}
+        ${c.status==='Completed'?`<button class="btn btn-orange btn-sm" onclick="showInvoice('${c.id}')">Invoice</button>`:''}
+      </td>
+    </tr>`).join('')}
+    ${myJobs.length===0?'<tr><td colspan="7" style="text-align:center;color:var(--text3);padding:24px">No jobs assigned to you yet</td></tr>':''}
+    </tbody>
+  </table></div></div>`;
+}
+
+function renderMyEarnings(){
+  if(!currentUser) return;
+  const done=DB.complaints.filter(c=>c.techId===currentUser.id&&c.status==='Completed');
+  const pay=techPayable(currentUser.id);
+  const totalEarned=done.reduce((a,c)=>a+calcTechEarning(c),0);
+  document.getElementById('page-my-earnings').innerHTML=`
+  <div class="page-title">💰 My Earnings</div>
+  <div class="grid-3" style="margin-bottom:16px">
+    <div class="stat-card"><div class="stat-label">Total Earned</div><div class="stat-value">${fmt(totalEarned)}</div></div>
+    <div class="stat-card" style="border-left:4px solid var(--green)"><div class="stat-label">Paid to Admin</div><div class="stat-value">${fmt(pay.paid)}</div></div>
+    <div class="stat-card" style="border-left:4px solid var(--red)"><div class="stat-label">Still Due to Admin</div><div class="stat-value">${fmt(pay.balance)}</div></div>
+  </div>
+  ${pay.balance>0?`<div class="alert alert-error" style="margin-bottom:16px">⚠️ You have an outstanding balance of <strong>${fmt(pay.balance)}</strong> to pay to admin. Please settle at the earliest.</div>`:'<div class="alert alert-success" style="margin-bottom:16px">✅ All dues settled. Thank you!</div>'}
+  <div class="card" style="padding:0;overflow:hidden">
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>Complaint</th><th>Customer</th><th>Services</th><th>My Earning</th><th>Admin Share</th><th>Total Job</th></tr></thead>
+    <tbody>${done.map(c=>`<tr>
+      <td style="font-family:monospace;font-size:11px">${c.id}</td>
+      <td>${c.name}</td>
+      <td style="max-width:180px">${(c.services||[]).map(s=>`<span class="chip">${getSvc(s.svcId).name||'—'}</span>`).join('')||'—'}</td>
+      <td style="font-weight:600;color:var(--green)">${fmt(calcTechEarning(c))}</td>
+      <td style="font-weight:600;color:var(--red)">${fmt(calcAdminShare(c))}</td>
+      <td style="font-weight:600">${fmt(calcComplaintTotal(c))}</td>
+    </tr>`).join('')}
+    ${done.length===0?'<tr><td colspan="6" style="text-align:center;color:var(--text3);padding:24px">No completed jobs yet</td></tr>':''}
+    </tbody>
+  </table></div></div>`;
+}
+
+// ===========================
+// INIT
+// ===========================
+loadDB();
+initDB();
+</script>
+</body>
+</html>
