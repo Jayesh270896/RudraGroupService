@@ -99,17 +99,25 @@ tr:hover td{background:#fafafa}
 
 <!-- LOGIN -->
 
-<div class="form-group">
-  <label>Email Address</label>
+<div id="login-screen" class="login-wrap">
+<div class="login-card">
+    <div class="login-logo">
+      <div style="font-size:36px;margin-bottom:8px">⚡</div>
+      <h1>Rudra Group</h1>
+      <p>Electronics Service Management</p>
+    </div>
+<div id="login-err" class="alert alert-error hidden"></div>	
   <input id="l-email" type="email" placeholder="Email address">
+	<div class="form-group"><label>Email Address</label><input id="l-email" type="email" placeholder="admin@rudra.com" value="admin@rudra.com"></div>														 
 </div>
 
-<div class="form-group">
-  <label>Password</label>
-  <input id="l-pass" type="password" placeholder="Password">
-</div>
+<div class="form-group"><label>Password</label><input id="l-pass" type="password" placeholder="Password" value=""></div>
 
-<button class="btn btn-primary" style="width:100%;justify-content:center;padding:11px;font-size:14px;margin-bottom:14px" onclick="doLogin()">Sign In →</button>
+
+ <button class="btn btn-primary" style="width:100%;justify-content:center;padding:11px;font-size:14px;margin-bottom:14px" onclick="doLogin()">Sign In →</button>
+    <div style="text-align:center;font-size:12px;color:var(--text3);margin-bottom:14px">
+      
+    </div>
 
     <hr class="section-divider">
     <div style="text-align:center">
@@ -367,7 +375,25 @@ function initDB(){
       password:'tech123',
       role:'technician',
       mobile:'9876543210'
+																						
+																								  
+																							  
     }
+	
+						  
+														   
+													 
+														 
+															 
+																	
+																	  
+														
+	
+									
+																																																																																																																																																																																																																																																																												  
+																																																																																																																																																																																																																																											  
+																																																																																																																														
+																																																																																																																																																																									 
   ];
 
   if(!DB.services) DB.services=[];
