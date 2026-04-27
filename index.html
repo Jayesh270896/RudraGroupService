@@ -379,40 +379,40 @@ function loadDB(){
 
 function initDB(){
   if(!DB.users) DB.users=[
-    {
-      id:'u1',
-      name:'Admin (Rudra)',
-      email:'admin@rudra.com',
-      password:'admin123',
-      role:'admin',
-      mobile:'9999999999'
-    },
-    {
-      id:'u2',
-      name:'Ravi Kumar',
-      email:'tech@rudra.com',
-      password:'tech123',
-      role:'technician',
-      mobile:'9876543210'
-																						
-																								  
-																							  
-    }
-	
+    {id:'u1',name:'Admin (Rudra)',email:'admin@rudra.com',password:'admin123',role:'admin',mobile:'9999999999'},
+			  
+						   
+							  
 						  
-														   
-													 
-														 
-															 
-																	
-																	  
-														
-	
-									
-																																																																																																																																																																																																																																																																												  
-																																																																																																																																																																																																																																											  
-																																																																																																																														
-																																																																																																																																																																									 
+				   
+						 
+	  
+    {id:'u2',name:'Ravi Kumar',email:'tech@rudra.com',password:'tech123',role:'technician',mobile:'9876543210'},
+    {id:'u3',name:'Suresh Patel',email:'tech2@rudra.com',password:'tech123',role:'technician',mobile:'9876543211'}
+  ];
+  if(!DB.services) DB.services=[
+    {id:'s1',name:'AC Gas Refill (R32)',price:1500,splitType:'percent',adminVal:60,techVal:40},
+    {id:'s2',name:'AC Service - Basic',price:800,splitType:'percent',adminVal:70,techVal:30},
+    {id:'s3',name:'AC Service - Deep Clean',price:1200,splitType:'percent',adminVal:65,techVal:35},
+    {id:'s4',name:'Fridge Repair',price:600,splitType:'percent',adminVal:65,techVal:35},
+    {id:'s5',name:'Washing Machine Service',price:700,splitType:'percent',adminVal:60,techVal:40},
+    {id:'s6',name:'PCB / Board Repair',price:1200,splitType:'fixed',adminVal:600,techVal:600},
+    {id:'s7',name:'Compressor Replacement',price:4500,splitType:'percent',adminVal:70,techVal:30}
+  ];
+  if(!DB.parts) DB.parts=[
+    {id:'p1',name:'AC Capacitor 45MFD',price:450,stock:15},
+    {id:'p2',name:'AC Fan Motor',price:1200,stock:5},
+    {id:'p3',name:'Fridge Thermostat',price:350,stock:8},
+    {id:'p4',name:'Washing Machine Belt',price:180,stock:20},
+    {id:'p5',name:'AC Remote Control Universal',price:250,stock:12},
+    {id:'p6',name:'Refrigerant Gas R32 (per unit)',price:800,stock:3},
+    {id:'p7',name:'AC Filter (Dust)',price:120,stock:25}
+  ];
+  if(!DB.complaints) DB.complaints=[
+    {id:'SVC-2024-0001',name:'Ramesh Sharma',mobile:'9812345678',alt:'',address:'12, Shiv Nagar, Rajkot - 360001',product:'AC',brand:'LG',model:'LS-Q18YNJA',desc:'Not cooling. Gas leak suspected. Running all day but room not cooling.',prefDate:'2024-01-15T10:00',status:'Completed',techId:'u2',visitDate:'2024-01-15T10:00',notes:'Carry gas cylinder',createdAt:'2024-01-14',cancelReason:'',history:[{date:'2024-01-14',action:'Complaint Registered',by:'Customer'},{date:'2024-01-14',action:'Assigned to Ravi Kumar. Visit: 15 Jan 10am',by:'Admin'},{date:'2024-01-15',action:'Status changed to Completed. AC gas refilled + capacitor replaced.',by:'Ravi Kumar'}],services:[{svcId:'s1',qty:1},{svcId:'s2',qty:1}],parts:[{partId:'p1',qty:1},{partId:'p6',qty:1}],payment:'Cash',invoiceNo:'INV-0001',remarks:'Gas refilled and capacitor replaced. AC working perfectly.'},
+    {id:'SVC-2024-0002',name:'Priya Patel',mobile:'9823456789',alt:'9823456700',address:'45, Gandhi Road, Rajkot - 360002',product:'Fridge',brand:'Samsung',model:'RT28A3452S8',desc:'Not cooling properly. Makes loud noise at night.',prefDate:'2024-01-18T11:00',status:'In Progress',techId:'u3',visitDate:'2024-01-18T11:00',notes:'Check thermostat and compressor',createdAt:'2024-01-17',cancelReason:'',history:[{date:'2024-01-17',action:'Complaint Registered',by:'Customer'},{date:'2024-01-17',action:'Assigned to Suresh Patel. Visit: 18 Jan 11am',by:'Admin'},{date:'2024-01-18',action:'Status changed to In Progress. Diagnosis underway.',by:'Suresh Patel'}],services:[],parts:[],payment:'',invoiceNo:'',remarks:''},
+    {id:'SVC-2024-0003',name:'Mohan Verma',mobile:'9834567890',alt:'',address:'78, Kalawad Road, Rajkot - 360005',product:'Washing Machine',brand:'Whirlpool',model:'WM-7.5 360',desc:'Not spinning. Vibrates heavily during wash cycle. Belt may be broken.',prefDate:'2024-01-20T09:00',status:'Registered',techId:'',visitDate:'',notes:'',createdAt:'2024-01-19',cancelReason:'',history:[{date:'2024-01-19',action:'Complaint Registered',by:'Customer'}],services:[],parts:[],payment:'',invoiceNo:'',remarks:''},
+    {id:'SVC-2024-0004',name:'Sunita Mehta',mobile:'9845678901',alt:'',address:'22, University Road, Rajkot - 360003',product:'AC',brand:'Voltas',model:'183V CZT3',desc:'AC trips after 10 minutes of running. Circuit breaker issue.',prefDate:'2024-01-22T14:00',status:'Assigned',techId:'u2',visitDate:'2024-01-22T14:00',notes:'Check PCB and capacitor',createdAt:'2024-01-21',cancelReason:'',history:[{date:'2024-01-21',action:'Complaint Registered',by:'Customer'},{date:'2024-01-21',action:'Assigned to Ravi Kumar. Visit: 22 Jan 2pm',by:'Admin'}],services:[],parts:[],payment:'',invoiceNo:'',remarks:''}
   ];
 
   if(!DB.services) DB.services=[];
